@@ -1,0 +1,66 @@
+{% extends 'layout.html' %}
+{% block title %}My Favorites{% endblock %}
+
+{% block content %}
+<section class="favorites">
+    <div class="container">
+        <h2>Избранное</h2>
+        {% if favorites %}
+            <div class="row">
+                {% for fav in favorites %}
+                    <div class="col-md-4">
+                        <div class="product-card">
+                            <a href="{% url 'products:product_detail' fav.product.id fav.product.slug %}">
+                                <img src="{{ fav.product.image.url }}" alt="{{ fav.product.name }}" style="width: 100%; height: auto;">
+                                <h4>{{ fav.product.name }}</h4>
+                            </a>
+                            <p>{{ fav.product.price }} ₽</p>
+                            <form method="post" action="{% url 'accounts:toggle_favorite' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="product_id" value="{{ fav.product.id }}">
+<button type="button" class="remove-fav" data-product-id="{{ fav.product.id }}">Удалить из избранного ❤️</button>
+
+
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Вы пока ничего не добавили.</p>
+        {% endif %}
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const buttons = document.querySelectorAll('.remove-fav');
+    buttons.forEach(button => {
+        button.addEventListener('click', function () {
+            const productId = this.dataset.productId;
+
+            fetch("{% url 'accounts:toggle_favorite' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: `product_id=${productId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'removed') {
+                    this.closest('.col-md-4').remove(); // Удаление карточки
+                } else {
+                    alert("Ошибка при удалении");
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+            });
+        });
+    });
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<section class="cart-total-page spad">
+    <div class="container">
+        <form method="POST" class="checkout-form">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-lg-12">
+                    <h3>Оформление заказа</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <p class="in-name">Полное имя*</p>
+                        </div>
+                        <div class="col-lg-10">
+                            {{ form.full_name }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <p class="in-name">Email*</p>
+                        </div>
+                        <div class="col-lg-10">
+                            {{ form.email }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <p class="in-name">Адрес*</p>
+                        </div>
+                        <div class="col-lg-10">
+                            {{ form.address }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12 text-right">
+                            <button type="submit" class="primary-btn" style="color: #444444; font-weight: 600;">
+    Оформить
+</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock content %}

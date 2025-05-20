@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Confirmation</title>
+</head>
+<body>
+    <h2>Thank you for your order!</h2>
+    <p>Order number: <strong>#{{ order.id }}</strong></p>
+    <p>Date: {{ order.created|date:"d M Y H:i" }}</p>
+
+    <h3>Order details:</h3>
+    <table>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+        </tr>
+        {% for item in order.items.all %}
+        <tr>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.price }} ₽</td>
+            <td>{{ item.get_cost }} ₽</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <p><strong>Subtotal: {{ order.get_total_cost }} ₽</strong></p>
+    <p><strong>Shipping: {{ order.shipping_cost }} ₽</strong></p>
+    <p><strong>Grand Total: {{ order.get_total_cost_with_shipping }} ₽</strong></p>
+
+    <p>Shipping address: {{ order.address }}</p>
+</body>
+</html>

@@ -1,0 +1,223 @@
+{% extends 'layout.html' %}
+
+{% block title %} My site {% endblock %}
+
+{% block cats %}
+<ul class="sub-menu">
+    {% for category in categories %}
+    <li>
+        <a href="{% url 'products:product_list_by_category' category.slug %}">{{category.name}}</a>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
+
+{% block brands %}
+<ul class="sub-menu">
+    {% for brand in brands %}
+    <li>
+        <a href="{% url 'products:product_list_by_brand' brand.slug %}">{{brand.name}}</a>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
+
+{% block content %}
+<section class="latest-products spad">
+    <div class="container">
+        <div class="row">
+            <!-- Боковая панель фильтров -->
+            <div class="col-lg-3 col-md-4 ">
+                <div class="filter-sidebar product-filter">
+                    <div class="section-title">
+                        <h4>Фильтры</h4>
+                    </div>
+                    <form method="get">
+                        <!-- Фильтр по категориям -->
+                        <div class="filter-section">
+                            <label>Категория:</label>
+                            <select name="category" class="form-control">
+                                <option value="">Все</option>
+                                {% for category in categories %}
+                                    <option value="{{ category.slug }}" {% if category.slug == request.GET.category %}selected{% endif %}>{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Фильтр по брендам -->
+                        <div class="filter-section">
+                            <label>Бренд:</label>
+                            <select name="brand" class="form-control">
+                                <option value="">Все</option>
+                                {% for brand in brands %}
+                                    <option value="{{ brand.slug }}" {% if brand.slug == request.GET.brand %}selected{% endif %}>{{ brand.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Фильтр по цене -->
+                        <div class="filter-section">
+                            <label>Цена от:</label>
+                            <input type="number" name="min_price" value="{{ min_price }}" class="form-control">
+                        </div>
+                        <div class="filter-section">
+                            <label>до:</label>
+                            <input type="number" name="max_price" value="{{ max_price }}" class="form-control">
+                        </div>
+
+                        <!-- Фильтр по наличию -->
+                        <div class="filter-section">
+                            <label>В наличии:</label>
+                            <select name="in_stock" class="form-control">
+                                <option value="">Все</option>
+                                <option value="yes" {% if in_stock == 'yes' %}selected{% endif %}>Да</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="primary-btn" style="color: #444444; font-weight: 600;">
+    Применить фильтры
+</button>
+
+                    </form>
+                </div>
+            </div>
+
+            <!-- Основной контент с товарами -->
+            <div class="col-lg-9 col-md-8">
+                <!-- Сортировка -->
+                <div class="product-controls-wrapper">
+                    <form method="get" class="product-sorting">
+                        <label for="sort-select">Сортировка:</label>
+                        <select name="order" id="sort-select">
+                            <option value="">По умолчанию</option>
+                            <option value="name_asc" {% if selected_order == 'name_asc' %}selected{% endif %}>Имя A → Я</option>
+                            <option value="name_desc" {% if selected_order == 'name_desc' %}selected{% endif %}>Имя Я → A</option>
+                        </select>
+
+                        <select name="price">
+                            <option value="">Цена</option>
+                            <option value="low_to_high" {% if selected_price == 'low_to_high' %}selected{% endif %}>Цена ↑</option>
+                            <option value="high_to_low" {% if selected_price == 'high_to_low' %}selected{% endif %}>Цена ↓</option>
+                        </select>
+                    </form>
+                </div>
+
+                <div class="product-grid">
+    <div class="row" id="product-list">
+        {% for product in products %}
+            <div class="col-lg-4 col-md-6 col-sm-6 single-product-item">
+                <div class="product-item-inner">
+                    <a href="{% url 'products:product_detail' product.id product.slug %}">
+                        {% if product.image %}
+                            <figure>
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                            </figure>
+                        {% else %}
+                            <p>The image is not available</p>
+                        {% endif %}
+                    </a>
+                    <div class="product-text">
+                        <h6>{{ product.name }}</h6>
+                        <p>{{ product.price }} ₽</p>
+                        <div class="product-content">
+                            <div class="product-quantity">
+                                <div class="pro-qty">
+                                    <input type="number" value="1" min="1" class="quantity-input">
+                                </div>
+                            </div>
+                            {% csrf_token %}
+                            <a href="{% url 'cart:cart_add' product.id %}" class="primary-btn pc-btn add-to-cart-btn">Добавить в корзину</a>
+                            <div class="message"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+                {% if page_obj.has_other_pages %}
+                    <div class="product-pagination">
+                        <ul>
+                            {% if page_obj.has_previous %}
+                                <li><a href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}" class="prev"><i class="fa fa-angle-left"></i></a></li>
+                            {% endif %}
+
+                            {% for page in page_obj.paginator.page_range %}
+                                {% if page == page_obj.number %}
+                                    <li><span class="active">{{ page }}</span></li>
+                                {% else %}
+                                    <li><a href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ page }}">{{ page }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if page_obj.has_next %}
+                                <li><a href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.next_page_number }}" class="next"><i class="fa fa-angle-right"></i></a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Находим все кнопки "Добавить в корзину"
+    document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+        button.addEventListener('click', function (event) {
+            event.preventDefault(); // Предотвращаем переход по ссылке
+
+            const url = button.href;
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            const messageElement = button.nextElementSibling;
+
+            // Ищем ближайший контейнер с товаром
+            const productContainer = button.closest('.product-item-inner');
+
+            // Считываем значение из поля количества
+            const quantityInput = productContainer.querySelector('.quantity-input');
+            const quantity = quantityInput ? parseInt(quantityInput.value) || 1 : 1;
+
+            // Отправляем POST-запрос
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ quantity: quantity }) // Передаём количество
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    messageElement.textContent = data.message;
+                    messageElement.style.color = 'green';
+                } else {
+                    messageElement.textContent = "Ошибка при добавлении";
+                    messageElement.style.color = 'red';
+                }
+
+                // Автоматическое скрытие сообщения через 3 секунды
+                setTimeout(() => {
+                    messageElement.textContent = '';
+                }, 3000);
+            })
+            .catch(error => {
+                messageElement.textContent = "Ошибка соединения";
+                messageElement.style.color = 'red';
+                console.error('Error:', error);
+            });
+        });
+    });
+
+    // Автоотправка формы при изменении сортировки
+    document.querySelectorAll('.product-sorting select').forEach(select => {
+        select.addEventListener('change', function () {
+            this.closest('form').submit();
+        });
+    });
+});
+</script>
+
+{% endblock %}

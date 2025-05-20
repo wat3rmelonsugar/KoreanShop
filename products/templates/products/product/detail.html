@@ -1,0 +1,281 @@
+{% extends 'layout.html' %}
+
+{% block title %}{{product.name}}{% endblock %}
+
+{% block content %}
+<section class="product-page">
+        <div class="container">
+            <div class="product-control">
+
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="product-slider owl-carousel">
+                        <div class="product-img">
+                            <figure>
+                                {% if product.image %}
+                                <img src="{{product.image.url}}" alt={{product.name}}">
+                                {% else %}
+                                    <p>The image is not available</p>
+                                    {% endif %}
+                            </figure>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-lg-6">
+                    <div class="product-content">
+                        <h2>{{product.name}}</h2>
+                        <div class="pc-meta">
+                            <h5>{{product.price}} ₽</h5>
+                            <div class="rating">
+                                <p>Рейтинг: {{ product.average_rating|floatformat:1 }} ⭐</p>
+                            </div>
+                            {% if user.is_authenticated %}
+    <button class="favorite-btn" data-product-id="{{ product.id }}">
+        <span class="favorite-icon">{% if is_favorite %}❤️{% else %}🤍{% endif %}</span>
+        <span class="favorite-text">{% if is_favorite %}Remove from Favorites{% else %}Add to Favorites{% endif %}</span>
+    </button>
+{% endif %}
+
+                        </div>
+
+                        <ul class="tags">
+                            <li><span>Категория :</span> {{product.category}}</li>
+                        </ul>
+<div class="product-quantity">
+    <div class="pro-qty">
+        <input type="number" name="quantity" class="product-quantity-input" value="1" min="1">
+    </div>
+</div>
+
+
+{% csrf_token %}
+<a href="{% url 'cart:cart_add' product.id %}" class="primary-btn pc-btn add-to-cart-btn">Добавить в корзину</a>
+<div class="message"></div>
+ <!-- Сообщение для каждой карточки -->
+                        <ul class="p-info">
+    <li class="tab-link active" data-tab="tab-1">О товаре</li>
+    <li class="tab-link" data-tab="tab-2">Отзывы</li>
+
+</ul>
+
+<!-- Контент вкладок -->
+<div class="tab-content active" id="tab-1">
+    <h3>Product Information</h3>
+    <p>{{product.description}}</p>
+</div>
+
+<div class="tab-content" id="tab-2" style="display: none;">
+    <h3>Reviews</h3>
+    {% for review in reviews %}
+    <div>
+        <strong>{{ review.user.username }}</strong> — {{ review.rating }}⭐
+        <p>{{ review.comment }}</p>
+        <small>{{ review.created_at }}</small>
+
+       {% if user == review.user %}
+    <button class="edit-review-btn"
+        data-review-id="{{ review.id }}"
+        data-review-rating="{{ review.rating }}"
+        data-review-comment="{{ review.comment }}">
+        Edit
+    </button>
+
+    <button class="delete-review-btn" data-review-id="{{ review.id }}">
+        Delete
+    </button>
+{% endif %}
+
+    </div>
+{% empty %}
+    <p>No reviews yet.</p>
+{% endfor %}
+
+
+   {% if user.is_authenticated %}
+<form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="add">
+    {{ form.as_p }}
+    <button type="submit">Submit</button>
+</form>
+{% else %}
+    <p><a href="{% url 'login' %}?next={{ request.path }}">Log in</a> to leave a review.</p>
+{% endif %}
+                        <div id="editModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-edit">&times;</span>
+        <h3>Edit Review</h3>
+        <form method="post" id="editReviewForm">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="edit">
+            <input type="hidden" name="review_id" id="editReviewId">
+            <label>Rating:</label>
+            <input type="number" name="rating" id="editReviewRating" min="1" max="5">
+            <label>Comment:</label>
+            <textarea name="comment" id="editReviewComment"></textarea>
+            <button type="submit">Save</button>
+        </form>
+    </div>
+</div>
+
+<!-- Модальное окно удаления -->
+<div id="deleteModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-delete">&times;</span>
+        <h3>Are you sure you want to delete this review?</h3>
+        <form method="post" id="deleteReviewForm">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="delete">
+            <input type="hidden" name="review_id" id="deleteReviewId">
+            <button type="submit">Confirm Delete</button>
+        </form>
+    </div>
+</div>
+</div>
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<script>
+    // Открытие модалки редактирования
+    document.querySelectorAll('.edit-review-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            document.getElementById('editReviewId').value = button.dataset.reviewId;
+            document.getElementById('editReviewRating').value = button.dataset.reviewRating;
+            document.getElementById('editReviewComment').value = button.dataset.reviewComment;
+            document.getElementById('editModal').style.display = 'block';
+        });
+    });
+
+    // Открытие модалки удаления
+    document.querySelectorAll('.delete-review-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            document.getElementById('deleteReviewId').value = button.dataset.reviewId;
+            document.getElementById('deleteModal').style.display = 'block';
+        });
+    });
+
+    // Закрытие модалок
+    document.querySelectorAll('.close-edit, .close-delete').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.getElementById('editModal').style.display = 'none';
+            document.getElementById('deleteModal').style.display = 'none';
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const tabLinks = document.querySelectorAll('.tab-link');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabLinks.forEach(tab => {
+            tab.addEventListener('click', function () {
+                // Сброс классов и скрытие всех табов
+                tabLinks.forEach(link => link.classList.remove('active'));
+                tabContents.forEach(content => content.style.display = 'none');
+
+                // Активируем текущий
+                this.classList.add('active');
+                const activeTabId = this.dataset.tab;
+                document.getElementById(activeTabId).style.display = 'block';
+            });
+        });
+
+        // Показываем первый таб по умолчанию
+        document.querySelector('.tab-link.active')?.click();
+    });
+</script>
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const addToCartBtn = document.querySelector('.add-to-cart-btn');
+    const quantityInput = document.querySelector('.product-quantity-input');
+    const messageElement = document.querySelector('.message');
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+
+    if (addToCartBtn && quantityInput) {
+        addToCartBtn.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            const url = this.href;
+            const quantity = parseInt(quantityInput.value) || 1;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ quantity: quantity })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    messageElement.textContent = data.message || 'Товар добавлен';
+                    messageElement.style.color = 'green';
+                } else {
+                    messageElement.textContent = data.message || 'Ошибка при добавлении';
+                    messageElement.style.color = 'red';
+                }
+                setTimeout(() => { messageElement.textContent = ''; }, 3000);
+            })
+            .catch(error => {
+                messageElement.textContent = "Ошибка соединения";
+                messageElement.style.color = 'red';
+                console.error('Error:', error);
+            });
+        });
+    }
+});
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const favoriteBtn = document.querySelector('.favorite-btn');
+        if (favoriteBtn) {
+            favoriteBtn.addEventListener('click', function () {
+                const productId = this.dataset.productId;
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                fetch("{% url 'accounts:toggle_favorite' %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        'product_id': productId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const icon = favoriteBtn.querySelector('.favorite-icon');
+                    const text = favoriteBtn.querySelector('.favorite-text');
+
+                    if (data.status === 'added') {
+                        icon.textContent = '❤️';
+                        text.textContent = 'Remove from Favorites';
+                    } else if (data.status === 'removed') {
+                        icon.textContent = '🤍';
+                        text.textContent = 'Add to Favorites';
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        }
+    });
+</script>
+
+
+
+{% endblock %}

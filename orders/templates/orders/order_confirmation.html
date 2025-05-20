@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Заказ был создан</h2>
+    <h3>Номер заказа: {{ order.id }}</h3>
+    <ul>
+        {% for item in order.items.all %}
+        <li class="mb-2">
+            <strong>{{ item.quantity }} x {{ item.product.name }}</strong><br>
+            <span>{{ item.price }} ₽</span>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock content %}

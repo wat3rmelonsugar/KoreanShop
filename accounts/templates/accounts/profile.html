@@ -1,0 +1,178 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<section class="account-page section">
+  <div class="container">
+    <h2 class="section-title">Личный кабинет</h2>
+
+    <div class="account-info card">
+      <h3 class="card-title">Информация о пользователе</h3>
+      <ul class="account-details">
+        <li><strong>Имя пользователя:</strong> {{ user.username }}</li>
+        <li><strong>Email:</strong> {{ user.email }}</li>
+        <li><strong>Дата регистрации:</strong> {{ user.date_joined|date:"d.m.Y H:i" }}</li>
+      </ul>
+    </div>
+
+    <div class="orders card">
+      <h3 class="card-title">Мои заказы</h3>
+      {% if orders %}
+        <div class="table-wrapper">
+          {% for order in orders %}
+            <div class="order-block">
+              <h4>Заказ #{{ order.id }} — {{ order.created_at|date:"d.m.Y H:i" }}</h4>
+              <p><strong>Статус:</strong> {{ order.paid|yesno:"Оплачен,Не оплачен" }}</p>
+              <p><strong>Сумма:</strong> {{ order.get_total_cost }} ₽</p>
+
+              <table class="styled-table">
+                <thead>
+                  <tr>
+                    <th>Товар</th>
+                    <th>Цена</th>
+                    <th>Количество</th>
+                    <th>Всего</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for item in order.items.all %}
+                  <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td>{{ item.price }} ₽</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.get_cost }} ₽</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <hr>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p>У вас пока нет заказов.</p>
+      {% endif %}
+    </div>
+   <div class="recommendations card">
+  <h3 class="card-title">Персональная рекомендация</h3>
+  {% if recommendation %}
+    <div class="recommendation-block">
+      <p><strong>Дата:</strong> {{ recommendation.created_at|date:"d.m.Y H:i" }}</p>
+  <div class="recommendation-text">
+    {% for line in recommendation.recommendation_text.splitlines %}
+      {% if line.strip %}
+        <p class="recommendation-line
+                  {% if '- ' in line %}
+                    product-item
+                  {% else %}
+                    section-heading
+                  {% endif %}">
+          {{ line }}
+        </p>
+      {% endif %}
+    {% endfor %}
+  </div>
+      {% if recommendation.pdf_file %}
+        <div class="download-link">
+          <a href="{{ recommendation.pdf_file.url }}" target="_blank" class="btn btn-primary">
+            <i class="fas fa-download"></i> Скачать PDF
+          </a>
+        </div>
+      {% endif %}
+    </div>
+    <div class="available-products card">
+      <h4 class="card-subtitle">Товары в наличии</h4>
+      <div class="product-links">
+      <ul>
+        <li><a href="http://127.0.0.1:8000/product/10/isntree-green-tea-fresh-toner/" target="_blank">IsNtree Green Tea Fresh Toner</a></li>
+        <li><a href="http://127.0.0.1:8000/product/12/banila-co-foam-cleanser-clean-it-zero-pore-clarifying/" target="_blank">	BANILA CO Foam Cleanser Clean It Zero Pore Clarifying</a></li>
+        <li><a href="http://127.0.0.1:8000/product/13/cosrx-ahabha-clarifying-treatment-toner/" target="_blank">COSRX AHA/BHA Clarifying Treatment Toner</a></li>
+        <li><a href="http://127.0.0.1:8000/product/14/cosrx-advanced-snail-92-all-in-one-cream/" target="_blank">COSRX Advanced Snail 92 All In One Cream</a></li>
+      </ul>
+    </div>
+  {% else %}
+    <p class="no-recommendation">У вас пока нет персональной рекомендации.</p>
+       </div>
+  {% endif %}
+</div>
+  </div>
+</section>
+
+<style>
+/* Рекомендации */
+.recommendations {
+  margin-top: 2rem;
+  font-size: 1.2rem;  /* Увеличиваем базовый размер шрифта */
+}
+
+.recommendation-block {
+  padding: 2rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.recommendation-date {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  color: #555;
+}
+
+.recommendation-line.section-heading {
+  font-size: 0.8em;
+
+  margin-top: 1em;
+}
+
+.recommendation-line.product-item {
+  font-size: 1em;
+  margin-left: 1.5em;
+  color: #333;
+}
+
+
+.recommendation-text {
+  font-size: 1.5rem;  /* Основной текст рекомендации */
+  line-height: 1.8;   /* Увеличиваем межстрочный интервал */
+  margin: 1.5rem 0;
+}
+
+.recommendation-line {
+  margin-bottom: 1.2rem;
+}
+
+.recommendation-line.product-item {
+  margin-left: 2rem;
+  font-size: 1.2rem;  /* Особо крупный для товаров */
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.no-recommendation {
+  font-size: 1.3rem;
+  font-style: italic;
+  color: #666;
+  padding: 1.5rem;
+}
+
+.download-link {
+  margin-top: 2rem;
+}
+
+.btn-primary {
+  font-size: 1.2rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.8rem 1.5rem;
+  background-color: #3498db;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #2980b9;
+}
+</style>
+{% endblock %}
+

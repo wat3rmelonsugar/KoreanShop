@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-l5qyj+a)_57_)h*uz59j^qv&pms!oe)!1=x%-!x1n1d+59f-_2'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'payment',
     'products',
     'accounts',
+    'recommendations',
 ]
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
@@ -81,22 +82,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'korean_shop.wsgi.application'
 
 # Добавьте в конец settings.py:
-
-# Celery Configuration
+# Настройки Celery
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-
-# Email settings (используйте свои)
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.yandex.ru'  # Например для Yandex
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'ваша_почта@yandex.ru'
-EMAIL_HOST_PASSWORD = 'ваш_пароль'
-DEFAULT_FROM_EMAIL = 'ваша_почта@yandex.ru'
+CELERY_TIMEZONE = 'UTC'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases

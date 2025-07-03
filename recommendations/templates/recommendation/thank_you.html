@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<section style="
+  max-width: 600px;
+  margin: 80px auto;
+  padding: 40px 20px;
+  text-align: center;
+  background: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+">
+  <div>
+    <h1 style="color: #2c3e50; margin-bottom: 20px;">Спасибо за заполнение анкеты!</h1>
+    <p style="font-size: 18px; color: #34495e;">
+      Ваши ответы успешно отправлены и обрабатываются.
+    </p>
+    <p style="margin-top: 30px;">
+      <a href="/" style="color: #3498db; text-decoration: none; font-weight: 600;">
+        Вернуться на главную страницу
+      </a>
+    </p>
+  </div>
+</section>
+{% endblock %}

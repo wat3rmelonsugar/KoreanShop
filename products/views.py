@@ -6,6 +6,7 @@ from django.http import HttpResponseForbidden, JsonResponse
 from .forms import ReviewForm
 from accounts.models import Favorite  # или откуда у тебя модель избранного
 from django.db.models import Q
+from orders.models import OrderItem
 
 def ajax_search(request):
     query = request.GET.get('q', '')
@@ -101,10 +102,23 @@ def product_detail(request, id, slug):
     if request.user.is_authenticated:
         is_favorite = Favorite.objects.filter(user=request.user, product=product).exists()
 
+        if request.user.is_authenticated:
+            print("User email:", request.user.email)
+
+            orders = OrderItem.objects.filter(
+                product=product,
+                order__email=request.user.email,
+            )
+            print("Found orders:", orders)
+
+            can_review = orders.exists()
+
         if request.method == 'POST':
             action = request.POST.get('action')
 
             if action == 'add':
+                if not can_review:
+                    return HttpResponseForbidden("Вы можете оставить отзыв только на заказанные товары.")
                 form = ReviewForm(request.POST)
                 if form.is_valid():
                     new_review = form.save(commit=False)
@@ -128,12 +142,13 @@ def product_detail(request, id, slug):
                     review.delete()
                     return redirect(request.path_info)
 
-    return render(request, 'products/product/detail.html', {
-        'product': product,
-        'reviews': reviews,
-        'form': form,
-        'is_favorite': is_favorite
-    })
+        return render(request, 'products/product/detail.html', {
+            'product': product,
+            'reviews': reviews,
+            'form': form,
+            'is_favorite': is_favorite,
+            'can_review': can_review
+        })
 
 @login_required
 def edit_review(request, pk):

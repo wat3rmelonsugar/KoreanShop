@@ -1,48 +1,57 @@
 {% extends 'layout.html' %}
-{% block title %}My Favorites{% endblock %}
+{% block title %}Избранное{% endblock %}
 
 {% block content %}
-<section class="favorites">
-    <div class="container">
-        <h2>Избранное</h2>
-        {% if favorites %}
-            <div class="row">
-                {% for fav in favorites %}
-                    <div class="col-md-4">
-                        <div class="product-card">
-                            <a href="{% url 'products:product_detail' fav.product.id fav.product.slug %}">
-                                <img src="{{ fav.product.image.url }}" alt="{{ fav.product.name }}" style="width: 100%; height: auto;">
-                                <h4>{{ fav.product.name }}</h4>
-                            </a>
-                            <p>{{ fav.product.price }} ₽</p>
-                            <form method="post" action="{% url 'accounts:toggle_favorite' %}">
-                                {% csrf_token %}
-                                <input type="hidden" name="product_id" value="{{ fav.product.id }}">
-<button type="button" class="remove-fav" data-product-id="{{ fav.product.id }}">Удалить из избранного ❤️</button>
+<section class="favorites py-5">
+  <div class="container">
+    <h2 class="mb-4 text-xl font-semibold">Избранное</h2>
 
+    {% if favorites %}
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for fav in favorites %}
+          <div class="col mb-4 favorite-card" data-product-id="{{ fav.product.id }}">
+            <div class="product-card p-3 shadow-sm rounded border h-100 d-flex flex-column justify-content-center align-items-center text-center">
+              <a href="{% url 'products:product_detail' fav.product.id fav.product.slug %}" class="text-decoration-none text-dark w-100">
+                <img src="{{ fav.product.image.url }}" alt="{{ fav.product.name }}" class="img-fluid rounded mb-3" style="max-height: 200px; object-fit: contain;">
+                <h5 class="mb-2">{{ fav.product.name }}</h5>
+              </a>
+              <p class="mb-3">{{ fav.product.price }} ₽</p>
 
-                            </form>
-                        </div>
-                    </div>
-                {% endfor %}
+              <form method="post" action="{% url 'accounts:toggle_favorite' %}" class="w-100 remove-fav-form">
+                {% csrf_token %}
+                <input type="hidden" name="product_id" value="{{ fav.product.id }}">
+                <button type="submit" class="primary-btn pc-btn favorite-btn d-flex align-items-center justify-content-center gap-2 w-100" data-product-id="{{ fav.product.id }}">
+                  <span class="favorite-icon">❤️</span>
+                  <span class="favorite-text">Удалить из избранного</span>
+                </button>
+              </form>
             </div>
-        {% else %}
-            <p>Вы пока ничего не добавили.</p>
-        {% endif %}
-    </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="d-flex" style="min-height: 60vh;">
+        <p class="text-muted fs-4">Вы пока ничего не добавили.</p>
+      </div>
+    {% endif %}
+  </div>
 </section>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const buttons = document.querySelectorAll('.remove-fav');
-    buttons.forEach(button => {
-        button.addEventListener('click', function () {
-            const productId = this.dataset.productId;
+    const forms = document.querySelectorAll('.remove-fav-form');
 
-            fetch("{% url 'accounts:toggle_favorite' %}", {
+    forms.forEach(form => {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const productId = this.querySelector('input[name="product_id"]').value;
+            const csrfToken = this.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+            fetch(this.action, {
                 method: "POST",
                 headers: {
-                    "X-CSRFToken": "{{ csrf_token }}",
+                    "X-CSRFToken": csrfToken,
                     "Content-Type": "application/x-www-form-urlencoded"
                 },
                 body: `product_id=${productId}`
@@ -50,17 +59,26 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'removed') {
-                    this.closest('.col-md-4').remove(); // Удаление карточки
+                    const card = this.closest('.favorite-card');
+                    if (card) card.remove();
+
+                    if (document.querySelectorAll('.favorite-card').length === 0) {
+                        document.querySelector('.favorites .container').innerHTML = `
+                            <div class="d-flex" style="min-height: 60vh;">
+                                <p class="text-muted fs-4">Вы пока ничего не добавили.</p>
+                            </div>
+                        `;
+                    }
                 } else {
-                    alert("Ошибка при удалении");
+                    alert("Не удалось удалить товар из избранного.");
                 }
             })
             .catch(error => {
                 console.error('Ошибка:', error);
+                alert("Произошла ошибка при удалении.");
             });
         });
     });
 });
 </script>
-
 {% endblock %}

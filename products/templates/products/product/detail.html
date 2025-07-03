@@ -4,144 +4,154 @@
 
 {% block content %}
 <section class="product-page">
-        <div class="container">
-            <div class="product-control">
-
-            </div>
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="product-slider owl-carousel">
-                        <div class="product-img">
-                            <figure>
-                                {% if product.image %}
-                                <img src="{{product.image.url}}" alt={{product.name}}">
-                                {% else %}
-                                    <p>The image is not available</p>
-                                    {% endif %}
-                            </figure>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="col-lg-6">
-                    <div class="product-content">
-                        <h2>{{product.name}}</h2>
-                        <div class="pc-meta">
-                            <h5>{{product.price}} ₽</h5>
-                            <div class="rating">
-                                <p>Рейтинг: {{ product.average_rating|floatformat:1 }} ⭐</p>
-                            </div>
-                            {% if user.is_authenticated %}
-    <button class="favorite-btn" data-product-id="{{ product.id }}">
-        <span class="favorite-icon">{% if is_favorite %}❤️{% else %}🤍{% endif %}</span>
-        <span class="favorite-text">{% if is_favorite %}Remove from Favorites{% else %}Add to Favorites{% endif %}</span>
-    </button>
-{% endif %}
-
-                        </div>
-
-                        <ul class="tags">
-                            <li><span>Категория :</span> {{product.category}}</li>
-                        </ul>
-<div class="product-quantity">
-    <div class="pro-qty">
-        <input type="number" name="quantity" class="product-quantity-input" value="1" min="1">
-    </div>
-</div>
-
-
-{% csrf_token %}
-<a href="{% url 'cart:cart_add' product.id %}" class="primary-btn pc-btn add-to-cart-btn">Добавить в корзину</a>
-<div class="message"></div>
- <!-- Сообщение для каждой карточки -->
-                        <ul class="p-info">
-    <li class="tab-link active" data-tab="tab-1">О товаре</li>
-    <li class="tab-link" data-tab="tab-2">Отзывы</li>
-
-</ul>
-
-<!-- Контент вкладок -->
-<div class="tab-content active" id="tab-1">
-    <h3>Product Information</h3>
-    <p>{{product.description}}</p>
-</div>
-
-<div class="tab-content" id="tab-2" style="display: none;">
-    <h3>Reviews</h3>
-    {% for review in reviews %}
-    <div>
-        <strong>{{ review.user.username }}</strong> — {{ review.rating }}⭐
-        <p>{{ review.comment }}</p>
-        <small>{{ review.created_at }}</small>
-
-       {% if user == review.user %}
-    <button class="edit-review-btn"
-        data-review-id="{{ review.id }}"
-        data-review-rating="{{ review.rating }}"
-        data-review-comment="{{ review.comment }}">
-        Edit
-    </button>
-
-    <button class="delete-review-btn" data-review-id="{{ review.id }}">
-        Delete
-    </button>
-{% endif %}
-
-    </div>
-{% empty %}
-    <p>No reviews yet.</p>
-{% endfor %}
-
-
-   {% if user.is_authenticated %}
-<form method="post">
-    {% csrf_token %}
-    <input type="hidden" name="action" value="add">
-    {{ form.as_p }}
-    <button type="submit">Submit</button>
-</form>
-{% else %}
-    <p><a href="{% url 'login' %}?next={{ request.path }}">Log in</a> to leave a review.</p>
-{% endif %}
-                        <div id="editModal" class="modal" style="display: none;">
-    <div class="modal-content">
-        <span class="close-edit">&times;</span>
-        <h3>Edit Review</h3>
-        <form method="post" id="editReviewForm">
-            {% csrf_token %}
-            <input type="hidden" name="action" value="edit">
-            <input type="hidden" name="review_id" id="editReviewId">
-            <label>Rating:</label>
-            <input type="number" name="rating" id="editReviewRating" min="1" max="5">
-            <label>Comment:</label>
-            <textarea name="comment" id="editReviewComment"></textarea>
-            <button type="submit">Save</button>
-        </form>
-    </div>
-</div>
-
-<!-- Модальное окно удаления -->
-<div id="deleteModal" class="modal" style="display: none;">
-    <div class="modal-content">
-        <span class="close-delete">&times;</span>
-        <h3>Are you sure you want to delete this review?</h3>
-        <form method="post" id="deleteReviewForm">
-            {% csrf_token %}
-            <input type="hidden" name="action" value="delete">
-            <input type="hidden" name="review_id" id="deleteReviewId">
-            <button type="submit">Confirm Delete</button>
-        </form>
-    </div>
-</div>
-</div>
-
-
-
-                    </div>
-                </div>
-            </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6">
+        <!-- Слева: слайдер и изображение -->
+        <div class="product-slider owl-carousel">
+          <div class="product-img">
+            <figure>
+              {% if product.image %}
+                <img src="{{product.image.url}}" alt="{{product.name}}">
+              {% else %}
+                <p>The image is not available</p>
+              {% endif %}
+            </figure>
+          </div>
         </div>
-    </section>
+      </div>
+
+      <div class="col-lg-6">
+        <!-- Справа: информация о товаре -->
+        <div class="product-content">
+          <h2>{{product.name}}</h2>
+          <div class="pc-meta">
+            <h5>{{product.price}} ₽</h5>
+            <div class="rating">
+              <p>Рейтинг: {{ product.average_rating|floatformat:1 }} ⭐</p>
+            </div>
+            {% if user.is_authenticated %}
+              <button class="primary-btn pc-btn favorite-btn" data-product-id="{{ product.id }}">
+                <span class="favorite-icon">
+                  {% if is_favorite %}❤️{% else %}🤍{% endif %}
+                </span>
+                <span class="favorite-text">
+                  {% if is_favorite %}Удалить из Избранного{% else %}Добавить в Избранное{% endif %}
+                </span>
+              </button>
+            {% endif %}
+          </div>
+
+          <ul class="tags">
+            <li><span>Категория :</span> {{product.category}}</li>
+          </ul>
+
+          <div class="product-quantity">
+            <div class="pro-qty">
+              <input type="number" name="quantity" class="product-quantity-input" value="1" min="1">
+            </div>
+          </div>
+
+          {% csrf_token %}
+          <a href="{% url 'cart:cart_add' product.id %}" class="primary-btn pc-btn add-to-cart-btn">Добавить в корзину</a>
+          <div class="message"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Вкладки (таб ссылки) -->
+    <ul class="p-info">
+      <li class="tab-link active" data-tab="tab-1">О товаре</li>
+      <li class="tab-link" data-tab="tab-2">Отзывы</li>
+    </ul>
+
+    <!-- Контент вкладок -->
+    <div class="tab-content-wrap">
+      <div class="tab-content active" id="tab-1">
+        <h3>Информация о товаре</h3>
+        <p>{{product.description}}</p>
+      </div>
+
+      <div class="tab-content" id="tab-2" style="display: none;">
+        <h3>Отзывы</h3>
+        {% for review in reviews %}
+          <div>
+            <strong>{{ review.user.username }}</strong> — {{ review.rating }}⭐
+            <p>{{ review.comment }}</p>
+            <small>{{ review.created_at|date:"d.m.Y" }}</small>
+
+
+            {% if user == review.user %}
+              <button class="primary-btn edit-review-btn"
+                      data-review-id="{{ review.id }}"
+                      data-review-rating="{{ review.rating }}"
+                      data-review-comment="{{ review.comment }}">
+                Редактировать
+              </button>
+
+              <button class="primary-btn delete-review-btn" data-review-id="{{ review.id }}">
+                Удалить
+              </button>
+            {% endif %}
+          </div>
+        {% empty %}
+          <p>Пока нет отзывов.</p>
+        {% endfor %}
+
+        {% if user.is_authenticated %}
+          {% if can_review %}
+            <form method="post">
+              {% csrf_token %}
+              <input type="hidden" name="action" value="add">
+              {{ form.as_p }}
+              <button type="submit" class="primary-btn pc-btn">Оставить отзыв</button>
+            </form>
+          {% else %}
+            <p>Вы можете оставить отзыв только на товары, которые вы покупали.</p>
+          {% endif %}
+        {% else %}
+          <p><a href="{% url 'login' %}?next={{ request.path }}">Войдите</a>, чтобы оставить отзыв.</p>
+        {% endif %}
+
+        <!-- Модальные окна -->
+        <div id="editModal" class="modal" style="display: none;">
+          <div class="modal-content">
+            <span class="close-edit">&times;</span>
+            <h3>Редактировать</h3>
+            <form method="post" id="editReviewForm">
+  {% csrf_token %}
+  <input type="hidden" name="action" value="edit">
+  <input type="hidden" name="review_id" id="editReviewId">
+
+  <label for="editReviewRating" class="form-label">Оценка:</label>
+  <input type="number" name="rating" id="editReviewRating" min="1" max="5" class="form-input">
+
+  <label for="editReviewComment" class="form-label">Комментарий:</label>
+  <textarea name="comment" id="editReviewComment" class="form-textarea"></textarea>
+
+  <button type="submit" class="primary-btn pc-btn">Сохранить</button>
+</form>
+
+          </div>
+        </div>
+
+        <div id="deleteModal" class="modal" style="display: none;">
+          <div class="modal-content">
+            <span class="close-delete">&times;</span>
+            <h3>Вы уверены что хотите удалить отзыв?</h3>
+            <form method="post" id="deleteReviewForm">
+              {% csrf_token %}
+              <input type="hidden" name="action" value="delete">
+              <input type="hidden" name="review_id" id="deleteReviewId">
+              <button type="submit" class="primary-btn pc-btn">Подтвердить</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 
 <script>
     // Открытие модалки редактирования

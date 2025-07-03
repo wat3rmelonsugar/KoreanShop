@@ -1,10 +1,24 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-  <h2>Вход</h2>
-  <form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Войти</button>
-  </form>
+<section class="auth-section section">
+  <div class="container">
+    <div class="card auth-card">
+      <h2 class="card-title">Вход</h2>
+      <form method="POST" class="auth-form">
+        {% csrf_token %}
+        {% for field in form %}
+          <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+              <div class="form-error">{{ field.errors|striptags }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+        <button type="submit" class="primary-btn pc-btn">Войти</button>
+      </form>
+    </div>
+  </div>
+</section>
 {% endblock %}

@@ -44,14 +44,21 @@
 <div class="search-bar">
     <form class="search-form" id="live-search-form" onsubmit="return false;">
         <input type="text" id="search-input" name="q" placeholder="Поиск товаров..." autocomplete="off">
-        <button type="submit"><i class="fa fa-search"></i></button>
+        <button type="submit" class="search-btn">
+  <img src="{% static 'img/icons/search.png' %}" alt="Search" />
+</button>
     </form>
 </div>
 
-
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'accounts:account_profile' %}">
                     <img src="{% static 'img/icons/man.png' %}" alt="">
+                        </a>
+                    {% endif %}
    {% if user.is_authenticated %}
-    <a href="{% url 'accounts:favorites_list' %}">❤️ </a>
+    <a href="{% url 'accounts:favorites_list' %}">
+        <img src="{% static 'img/icons/fav.png' %}" alt="">
+        ️ </a>
 {% endif %}
 
 
@@ -75,7 +82,7 @@
                         <li><a href="">Бренды</a>
                         {% block brands %}
                             {% endblock %}</li>
-
+                        <li><a href="{% url 'rec:questionnaire' %}">Опрос</a></li>
                     </ul>
                 </nav>
             </div>
@@ -92,22 +99,15 @@
     <!-- Header Info End -->
     <!-- Header End -->
 {% if messages %}
-  <div id="flash-messages" class="flash-messages">
+  <div class="message-container my-4">
     {% for message in messages %}
-      <div
-        class="flash-message
-               {% if message.tags == 'success' %}flash-success
-               {% elif message.tags == 'info' %}flash-info
-               {% elif message.tags == 'warning' %}flash-warning
-               {% elif message.tags == 'error' %}flash-error
-               {% else %}flash-default{% endif %}"
-        role="alert"
-      >
+      <div class="alert-box {{ message.tags|default:'info' }}">
         {{ message }}
       </div>
     {% endfor %}
   </div>
 {% endif %}
+
 
 
 

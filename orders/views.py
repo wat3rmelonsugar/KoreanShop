@@ -6,13 +6,16 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import  Order, OrderItem
 from cart.views import get_user_cart
-from .tasks import send_order_confirmation
 
-from .tasks import send_order_confirmation  # Импортируем задачу Celery
+from django.contrib.auth.decorators import login_required
 
 
 def order_create(request):
     cart = get_user_cart(request, request.user if request.user.is_authenticated else None)
+
+    if not request.user.is_authenticated:
+        messages.info(request, "Пожалуйста, войдите в аккаунт, чтобы оформить заказ.")
+        return redirect('login')
 
     if not cart or not cart.items.exists():
         messages.error(request, "Your cart is empty!")

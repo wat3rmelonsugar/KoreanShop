@@ -56,5 +56,6 @@ urlpatterns = [
     path("login/", LoginMessageView.as_view(template_name="accounts/login.html"), name="login"),  # Используем кастомное представление
     path("logout/", LogoutMessageView.as_view(), name="logout"),  # Используем кастомное представление
     path('accounts/', include('accounts.urls')),
+    path('rec/', include('recommendations.urls')),
     path('', include("products.urls", namespace='products')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

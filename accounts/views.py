@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
 from .forms import UserRegisterForm
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from .models import Favorite
 from products.models import Product
 from django.http import JsonResponse
-
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from orders.models import Order
+from recommendations.models import UserRecommendation
 
 def register(request):
     if request.method == "POST":
@@ -41,5 +42,24 @@ def toggle_favorite(request):
 
     return JsonResponse({'status': 'error'}, status=400)
 
+
+
+@login_required
+def account_profile_view(request):
+    user = request.user
+    orders = Order.objects.filter(user=user).order_by('-created_at')
+
+    # Получаем последнюю рекомендацию для пользователя, если есть
+    recommendation = (
+        UserRecommendation.objects.filter(user=user)
+        .order_by('-created_at')
+        .first()
+    )
+
+    return render(request, 'accounts/profile.html', {
+        'user': user,
+        'orders': orders,
+        'recommendation': recommendation,
+    })
 
 

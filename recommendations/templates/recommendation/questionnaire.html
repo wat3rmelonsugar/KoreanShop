@@ -1,0 +1,188 @@
+{% extends 'layout.html' %}
+
+
+{% block content %}
+<head>
+    <title>Опрос</title>
+<style>
+    .survey-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 40px;
+        background-color: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .survey-title {
+        color: #2c3e50;
+        margin-bottom: 30px;
+        text-align: center;
+        font-size: 28px;
+        font-weight: 600;
+    }
+
+    .survey-question {
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .question-text {
+        font-size: 18px;
+        color: #34495e;
+        margin-bottom: 15px;
+        font-weight: 500;
+    }
+
+    .radio-options, .checkbox-options {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .checkbox-options {
+        flex-wrap: wrap;
+    }
+
+    .radio-label, .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        padding: 8px 12px;
+        border-radius: 8px;
+        transition: background-color 0.2s;
+    }
+
+    .radio-label:hover, .checkbox-label:hover {
+        background-color: #f5f9ff;
+    }
+
+    .radio-text, .checkbox-text {
+        font-size: 16px;
+        color: #2c3e50;
+    }
+
+    input[type="radio"], input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: #3498db;
+        cursor: pointer;
+    }
+
+    .email-input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+    }
+
+    .submit-button {
+        display: block;
+        margin: 30px auto 0;
+        padding: 12px 24px;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
+    }
+
+    .submit-button:hover {
+        background-color: #2980b9;
+    }
+
+    .error-message {
+        color: #e74c3c;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+</style>
+</head>
+<body>
+
+<div class="survey-container">
+    <h1 class="survey-title">Заполните анкету</h1>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% for field in form %}
+            <div class="survey-question">
+                <div class="question-text">{{ field.label }}</div>
+
+                {% if field.field.widget.input_type == 'radio' %}
+                    <div class="radio-options">
+                        {% for choice in field %}
+                            <label class="radio-label">
+                                {{ choice.tag }}
+                                <span class="radio-text">{{ choice.choice_label }}</span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                {% elif field.field.widget.input_type == 'checkbox' %}
+                    <div class="checkbox-options" data-field-name="{{ field.name }}">
+                        {% for choice in field %}
+                            <label class="checkbox-label">
+                                {{ choice.tag }}
+                                <span class="checkbox-text">{{ choice.choice_label }}</span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ field }}
+                {% endif %}
+
+                {% if field.errors %}
+                    <div class="error-message">{{ field.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="submit-button">Отправить</button>
+    </form>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Ищем ВСЕ группы чекбоксов на странице
+    const allCheckboxGroups = document.querySelectorAll('.checkbox-options');
+
+    // Ищем нужную группу чекбоксов по наличию нужного текста
+    let targetGroup = null;
+    allCheckboxGroups.forEach(group => {
+        const questionText = group.closest('.survey-question')?.querySelector('.question-text')?.textContent;
+        if (questionText && questionText.includes("Какие проблемы с кожей вас беспокоят")) {
+            targetGroup = group;
+        }
+    });
+
+    if (!targetGroup) return;
+
+    const checkboxes = targetGroup.querySelectorAll('input[type="checkbox"]');
+    const noneOption = Array.from(checkboxes).find(cb => cb.value === "6");
+
+    function toggleCheckboxes() {
+        if (noneOption.checked) {
+            checkboxes.forEach(cb => {
+                if (cb !== noneOption) {
+                    cb.checked = false;
+                    cb.disabled = true;
+                }
+            });
+        } else {
+            checkboxes.forEach(cb => cb.disabled = false);
+        }
+    }
+
+    checkboxes.forEach(cb => cb.addEventListener("change", toggleCheckboxes));
+    toggleCheckboxes(); // При загрузке
+});
+</script>
+
+</body>
+{% endblock content %}

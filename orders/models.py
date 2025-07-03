@@ -1,8 +1,10 @@
 from django.db import models
 from products.models import Product
+from accounts.models import CustomUser
 
 
 class Order(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='orders', null=True, blank=True)
     full_name = models.CharField(max_length=250)
     email = models.EmailField()
     address = models.CharField(max_length=250)

@@ -155,9 +155,9 @@ ol {
 .primary-btn {
 	color: #fff;
 	display: inline-block;
-	font-size: 14px;
+	font-size: 12px;
 	font-weight: 600;
-	padding: 10px 40px;
+	padding: 10px 20px;
 	border: 2px solid #fff;
 	border-radius: 50px;
 	text-transform: uppercase;
@@ -168,9 +168,9 @@ ol {
 .site-btn {
 	color: #1e1e1e;
 	display: inline-block;
-	font-size: 14px;
+	font-size: 12px;
 	font-weight: 600;
-	padding: 16px 40px;
+	padding: 10px 20px;
 	border: 2px solid #1e1e1e;
 	border-radius: 50px;
 	cursor: pointer;
@@ -280,7 +280,7 @@ ol {
 
 .inner-header .header-right img {
 	display: inline-block;
-	margin-right: 20px;
+
 	cursor: pointer;
 }
 
@@ -699,6 +699,126 @@ ol {
 	text-transform: uppercase;
 }
 
+.edit-review-btn,
+.delete-review-btn {
+  margin: 5px 10px 5px 0;
+  padding: 10px 20px;
+  border: none;
+
+  background-color: #f4f4f4;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 10px;
+}
+
+
+.account-page {
+  padding: 40px 0;
+}
+
+.section-title {
+  font-size: 28px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.card {
+  background: #fff;
+  padding: 25px 30px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin-bottom: 40px;
+}
+
+.card-title {
+  font-size: 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.account-details li {
+  margin-bottom: 10px;
+}
+
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
+}
+
+.styled-table th,
+.styled-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.styled-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.border-btn {
+  display: inline-block; /* по ширине текста */
+  width: auto;           /* убрать ширину 100%, если есть */
+  padding: 8px 16px;     /* подгоняем отступы */
+  border: 1px solid #ccc;
+  background-color: transparent;
+  color: #333;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.border-btn:hover {
+  background-color: #f5f5f5;
+}
+
+
+
+.auth-section {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.auth-card {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.auth-form .form-group {
+  margin-bottom: 20px;
+}
+
+.auth-form label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.form-error {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+
 .features-box .single-box-item img {
 	min-width: 100%;
 }
@@ -753,7 +873,7 @@ ol {
     position: absolute;
     top: 10px;
     right: 15px;
-    font-size: 24px;
+    font-size: 14px;
     font-weight: bold;
     color: #333;
     cursor: pointer;
@@ -1006,6 +1126,84 @@ ol {
     margin-bottom: 0;
 }
 
+.questionnaire-section {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.questionnaire-card {
+  max-width: 700px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 30px;
+  border-radius: 12px;
+  background-color: #fff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+.questionnaire-form .form-group {
+  margin-bottom: 24px;
+}
+
+.questionnaire-form label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #1e1e1e;
+  cursor: pointer;
+}
+
+.questionnaire-form input[type="radio"],
+.questionnaire-form input[type="checkbox"] {
+  margin-right: 10px;
+  accent-color: #1e1e1e;
+  cursor: pointer;
+}
+
+.questionnaire-form input[type="email"],
+.questionnaire-form input[type="text"],
+.questionnaire-form select,
+.questionnaire-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.questionnaire-form .form-error {
+  color: red;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.questionnaire-submit {
+  display: inline-block;
+  padding: 10px 24px;
+  border: 1px solid #ccc;
+  background-color: transparent;
+  color: #1e1e1e;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.questionnaire-submit:hover {
+  background-color: #f5f5f5;
+}
+
+.questionnaire-form ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.questionnaire-form ul li {
+  margin-bottom: 6px;
+}
+
 /*---------------------
   Lookbok Section
 -----------------------*/
@@ -1191,6 +1389,8 @@ ol {
 	-webkit-transition: all 0.3s;
 	transition: all 0.3s;
 }
+
+
 
 .social-links a.instagram:hover i {
 	color: #2F5D84;
@@ -1482,14 +1682,112 @@ ol {
 	background: #ffffff;
 }
 
+#sort-select {
+  margin-right: 20px;
+}
+
+.search-bar {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 20px; /* Отступ справа для расстояния от других элементов */
+}
+
+.search-form {
+  display: flex;
+  border-radius: 40px;
+  align-items: center;
+  border: 1px solid #ddd; /* легкая рамка */
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.search-form input[type="text"] {
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 14px;
+  outline: none;
+  width: 180px;
+  transition: width 0.3s ease;
+}
+
+.search-form input[type="text"]:focus {
+  width: 240px; /* плавное расширение при фокусе */
+  border: none;
+}
+
+.search-form button {
+  background-color: #007bff; /* основной цвет кнопок (замени на ваш основной) */
+  border: none;
+  color: white;
+  padding: 8px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+.search-form button.search-btn {
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-form button.search-btn img {
+  height: 18px;
+  display: block;
+}
+
+.fav-product-img {
+  width: 150px; /* подбирай размер по желанию */
+  height: auto;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.product-image {
+  width: 20px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+
+.search-form button:hover {
+  background-color: #0056b3; /* темнее при наведении */
+}
+
+.search-form button i.fa-search {
+  font-size: 16px;
+}
+
 .product-img figure {
-	margin: 0;
+	margin-top: 50px;
 	position: relative;
+		justify-content: center; /* по горизонтали */
+	align-items: center;     /* по вертикали */
 }
 
 .product-img figure img {
-	min-width: 100%;
+	display: inline-block;
 }
+
+
+.product-img figure img {
+	width: 80%;
+    max-width: 300px;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 8px; /* по желанию */
+}
+
 
 .product-img figure .p-status {
 	position: absolute;
@@ -1570,7 +1868,6 @@ ol {
 	text-align: center;
 	background: transparent;
 	border: none;
-	font-size: 18px;
 	font-family: "Montserrat", sans-serif;
 	font-weight: 700;
 	height: 100%;
@@ -1589,10 +1886,116 @@ ol {
 	border-color: #D0D7DB;
 	color: #4a4a4a;
 }
+.primary-btn.pc-btn {
+  color: #333;
+  padding: 12px 24px;
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
 
 .product-content .p-info {
 	margin-top: 75px;
 }
+.align-left {
+    text-align: left;
+    margin-left: 0;
+}
+
+.form-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 32px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+.auth-form input,
+.auth-form select,
+.auth-form textarea {
+  width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: border-color 0.3s ease;
+}
+
+.auth-form input:focus,
+.auth-form textarea:focus {
+  outline: none;
+  border-color: #ff4d4f;
+}
+
+.message-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 100%;
+}
+
+.alert-box {
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 500;
+  background-color: #f7f7f7;
+  color: #333;
+  border-left: 4px solid #ccc;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease-in-out;
+}
+
+.alert-box.success {
+  background-color: #f0f0f0;
+  border-color: #a0a0a0;
+  color: #333;
+}
+
+.alert-box.info {
+  background-color: #f0f0f0;
+  border-color: #bbb;
+  color: #333;
+}
+
+.alert-box.warning {
+  background-color: #f4f4f4;
+  border-color: #999;
+  color: #333;
+}
+
+.alert-box.error {
+  background-color: #f1f1f1;
+  border-color: #888;
+  color: #333;
+}
+
+.alert-box.default {
+  background-color: #f9f9f9;
+  border-color: #ccc;
+  color: #333;
+}
+
+.favorite-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+.favorites .product-card {
+  transition: box-shadow 0.3s ease;
+}
+
+.favorites .product-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
 
 .product-content .p-info li {
 	display: inline-block;
@@ -1607,6 +2010,59 @@ ol {
 /*---------------------
   Related Products
 -----------------------*/
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 8px 12px;
+  margin-bottom: 16px;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.form-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-control {
+  box-sizing: border-box; /* чтобы padding не ломал ширину */
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+.form-control {
+    width: 150px; /* для инпутов */
+}
+
+textarea.form-control {
+    width: 300px;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: block;
+}
 
 .related-product {
 	padding-top: 95px;
@@ -1690,19 +2146,25 @@ ol {
 }
 
 .cart-table table .quantity-col .pro-qty {
-	height: 56px;
+	height: 40px;
 	width: 173px;
 	border: 2px solid #EEF1F2;
 	border-radius: 50px;
 	text-align: center;
 }
 
+.small-product-img {
+  width: 100px;
+  height: auto;
+  display: block;
+}
+
+
 .cart-table table .quantity-col .pro-qty input {
 	width: 50px;
 	text-align: center;
 	background: transparent;
 	border: none;
-	font-size: 18px;
 	font-family: "Montserrat", sans-serif;
 	font-weight: 700;
 	height: 100%;
@@ -2379,7 +2841,7 @@ ol {
 		margin-top: 10px;
 	}
 	.inner-header .header-right {
-		margin-right: 20px;
+
 		margin-top: 4px;
 	}
 	.slicknav_nav ul {

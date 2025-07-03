@@ -3,7 +3,9 @@ from products.models import Product
 from .models import Cart, CartItem
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
+from django.contrib import messages
 import json
+from django.contrib.auth.decorators import login_required
 
 
 def get_user_cart(request, user=None):
@@ -144,3 +146,28 @@ def cart_clear(request):
 
     return redirect('cart:cart_detail')
 
+
+@require_POST
+def update_cart(request):
+    cart = get_user_cart(request, request.user if request.user.is_authenticated else None)
+
+    if request.method == 'POST' and cart:
+        for key, value in request.POST.items():
+            if key.startswith('quantity_'):
+                try:
+                    item_id = int(key.split('_')[1])
+                    quantity = int(value)
+
+                    item = CartItem.objects.get(id=item_id, cart=cart)
+
+                    if quantity > 0:
+                        item.quantity = quantity
+                        item.save()
+                    else:
+                        item.delete()
+                except (ValueError, CartItem.DoesNotExist):
+                    continue
+
+        messages.success(request, "Корзина обновлена.")
+
+    return redirect('cart:cart_detail')
